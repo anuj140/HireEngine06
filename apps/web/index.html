@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Job Portal Pro</title>
+    <link href="https://api.fontshare.com/v2/css?f[]=satoshi@700,500,400&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['Satoshi', 'Satoshi Fallback', 'sans-serif'],
+            },
+            colors: {
+              primary: '#0073B1',
+              'primary-dark': '#005f94',
+              accent: '#00B8D9',
+              'accent-dark': '#009cb8',
+              secondary: '#ff7555',
+              'light-gray': '#F5F6F7',
+              'medium-gray': '#EAEAEA',
+              'dark-gray': '#333333',
+              success: '#28A745',
+              'brand-purple': '#f2e7ff',
+              'brand-purple-text': '#844fc1',
+            },
+            keyframes: {
+              fadeIn: {
+                '0%': { opacity: '0' },
+                '100%': { opacity: '1' },
+              },
+              slideInRight: {
+                '0%': { transform: 'translateX(100%)', opacity: '0' },
+                '100%': { transform: 'translateX(0)', opacity: '1' },
+              },
+               slideDown: {
+                '0%': { transform: 'translateY(-20%)', opacity: '0' },
+                '100%': { transform: 'translateY(0)', opacity: '1' },
+              }
+            },
+            animation: {
+              'fade-in': 'fadeIn 0.2s ease-out forwards',
+              'slide-in-right': 'slideInRight 0.3s ease-out forwards',
+              'slide-down': 'slideDown 0.3s ease-out forwards',
+            },
+          },
+        },
+      }
+    </script>
+    <style>
+       @font-face {
+        font-family: 'Satoshi Fallback';
+        src: local('Arial');
+        size-adjust: 95.00%;
+        ascent-override: 96%;
+        descent-override: 25%;
+        line-gap-override: 0%;
+      }
+      .scrollbar-hide::-webkit-scrollbar {
+        display: none;
+      }
+      .scrollbar-hide {
+        -ms-overflow-style: none; /* IE and Edge */
+        scrollbar-width: none; /* Firefox */
+      }
+      .custom-scrollbar::-webkit-scrollbar {
+        width: 6px;
+      }
+      .custom-scrollbar::-webkit-scrollbar-track {
+        background: #f7f8fa;
+        border-radius: 10px;
+      }
+      .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: #EAEAEA;
+        border-radius: 10px;
+      }
+      .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+        background: #c7c7c7;
+      }
+      .hero-background {
+        position: relative;
+        overflow: hidden;
+        background-image:
+          url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3e%3cfilter id='n' x='0' y='0'%3e%3cfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3e%3c/filter%3e%3crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3e%3c/svg%3e"),
+          linear-gradient(to bottom right, #0073B1, #00B8D9);
+      }
+      .hero-background::before,
+      .hero-background::after {
+          content: '';
+          position: absolute;
+          border-radius: 50%;
+          filter: blur(200px);
+          z-index: 0;
+      }
+      .hero-background::before {
+          width: 650px;
+          height: 650px;
+          background: rgba(0, 184, 217, 0.25);
+          top: -300px;
+          left: -250px;
+          opacity: 0.6;
+      }
+      .hero-background::after {
+          width: 750px;
+          height: 750px;
+          background: rgba(0, 95, 148, 0.25);
+          bottom: -350px;
+          right: -300px;
+          opacity: 0.5;
+      }
+    </style>
+  </head>
+  <body class="font-sans">
+    <div id="root"></div>
+    <script type="module" src="/index.tsx"></script>
+  </body>
+</html>

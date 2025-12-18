@@ -1,0 +1,312 @@
+Hire Engine Api Endpoints
+
+POST
+✅Register - user
+{{URL}}/auth/register/user
+
+POST
+✅Register - admin
+{{URL}}/admin/register-admin
+
+POST
+✅Admin login
+{{URL}}/auth/login
+
+GET
+✅Check recruiter request - admin
+{{URL}}/admin/recruiter-requests/pending
+
+PUT
+✅Admin reject recruiter - admin
+{{URL}}/admin/approve
+
+
+POST
+✅Add Job - aprroved recruiter
+{{URL}}/recruiter/add-job
+
+POST
+✅Login admin, recruiter, user
+{{URL}}/auth/login
+
+POST
+✅Create bookmark - user
+{{URL}}/user/bookmarks
+
+
+POST
+✅Apply job - user
+{{URL}}/user/apply
+
+
+PUT
+✅Change application status - recruiter
+{{URL}}/recruiter/application-status
+
+
+POST
+✅Create/Update email template - admin
+{{URL}}/admin/email-templates
+
+
+POST
+✅Request to create account - recruiter
+{{URL}}/recruiter-request/
+
+
+GET
+✅Get all job (optionally by search) - public
+{{URL}}/jobs/
+
+
+GET
+✅Get single Job - public
+{{URL}}/jobs/6900aa03a314054d33acb7b3
+
+
+GET
+✅Get user profile - user
+{{URL}}/user/profile
+
+
+POST
+✅Send OTP to phone - user
+{{URL}}/auth/verify/phone/send
+
+
+
+POST
+✅Verify phone OTP - user
+{{URL}}/auth/verify/phone/check
+
+
+GET
+✅Get all Bookmarks - user
+{{URL}}/user/bookmarks
+
+
+DELETE
+✅Delete bookmark job - user
+{{URL}}/user/bookmarks/68cbe412a5d77e29f1c946fc
+
+
+
+POST
+✅Upload resume pdf - user
+{{URL}}/user/profile/resume
+
+
+
+POST
+✅Send phone OTP - recruiter
+{{URL}}/recruiter-request/verify/phone/send
+
+
+POST
+✅Verify phone OTP - recruiter
+{{URL}}/recruiter-request/verify/phone/check
+
+
+POST
+✅ Update or create email template - admin
+{{URL}}/admin/email-templates
+
+
+POST
+✅Send email OTP - recruiter
+{{URL}}/recruiter-request/email/send
+
+
+GET
+✅Verify recruiter email - recruiter
+{{URL}}/recruiter-request/email/check/?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyZXF1ZXN0SWQiOiI2OTE4MDZkNjNjMzI3YmVkNjI5MzUyYTQiLCJ0eXBlIjoicmVjcnVpdGVyX2VtYWlsX3ZlcmlmaWNhdGlvbiIsImlhdCI6MTc2MzE4MjcxMSwiZXhwIjoxNzYzMTg2MzExfQ.C2-GCgGxfcGZ5Pc4UM3UpoFjBtvfkht69mnYf6L6neQ
+
+
+PUT
+✅Change the application status - recruiter
+{{URL}}/recruiter//application-status
+
+
+GET
+✅Recruiter analytics - recruiter
+{{URL}}/recruiter/analytics
+
+
+GET
+Get all applicants across all jobs - recruiter (dashboard)
+{{URL}}/recruiter/applicants/all
+
+
+
+
+POST
+✅Bulk change applicant status - recruiter
+{{URL}}/recruiter/applicants/bulk-update
+
+
+GET
+✅applicant search - recruiter
+{{URL}}/recruiter/applicants/search
+
+
+POST
+Applicants resume bulk download - recruiter
+{{URL}}/recruiter/applicants/download-resumes
+
+
+PATCH
+✅Control visibility of posted job - recruiter
+{{URL}}/recruiter/jobs/status
+
+
+PUT
+✅Update job post - recruiter
+{{URL}}/recruiter/jobs/6900aa03a314054d33acb7b3
+
+
+GET
+✅Get all job posts - recruiter
+{{URL}}/recruiter/jobs/
+
+
+POST
+✅Invite team members - recruiter
+{{URL}}/recruiter/team/invite
+
+
+GET
+✅Get all team members - recruiter
+{{URL}}/recruiter/team/members
+
+
+POST
+✅Team member accept invite - public
+{{URL}}/recruiter/team/accept-invitation
+
+
+
+POST
+✅Team member login - public
+{{URL}}/recruiter/team/login
+
+
+
+PUT
+✅Update team role or permission - recruiter
+{{URL}}/recruiter/team/members/6901d80a2ab43e3dc1d94b16/role
+
+
+PATCH
+✅Pause/Active team member status - recruiter
+{{URL}}/recruiter/team/members/6901d80a2ab43e3dc1d94b16/status
+
+
+PUT
+✅Change team member password - recruiter
+{{URL}}/recruiter/team/members/6901d80a2ab43e3dc1d94b16/password
+
+
+POST
+✅Post Job - HR manager
+{{URL}}/recruiter/jobs/post-job
+
+
+PUT
+✅ Update user profile - user
+{{URL}}/user/profile
+
+
+POST
+✅ Upload profile photo - user
+{{URL}}/user/profile/photo
+
+
+POST
+✅Recruiter request documents upload - recruiter
+{{URL}}/recruiter-request/documents/upload
+
+
+POST
+✅Admin signup - initial setup only
+{{URL}}/auth/signup/admin
+
+
+
+POST
+✅Upsert company profile - recruiter
+{{URL}}/recruiter-dashboard/profile
+
+
+GET
+✅ Get single pending jobs - recruiter
+{{URL}}/recruiter/jobs/pending/690344530e87981cb08a5c90
+
+
+PATCH
+✅Approve pending jobs by main recruiter - recruiter
+{{URL}}/recruiter/jobs/pending/690344530e87981cb08a5c90/approve
+
+
+PATCH
+✅Job rejected by main recruiter - recruiter
+{{URL}}/recruiter/jobs/pending/690345830e87981cb08a5c9a/reject
+
+
+POST
+✅Register Admin - initial setup only
+{{URL}}/admin/register-admin
+
+
+
+POST
+✅Admin user block
+{{URL}}/admin/block
+
+
+
+GET
+✅Recruiter pending request - website admin
+{{URL}}/admin/recruiter-requests/pending
+
+
+GET
+✅Show pending recruiter stats - website admin
+{{URL}}/admin/recruiter-requests/stats
+
+
+GET
+✅Get notification - user
+{{URL}}/notifications
+
+
+GET
+✅ Get 5 recent applicants - recruiter
+{{URL}}/recruiter/recent-applicants
+
+
+GET
+✅Get top performing job with view count - recruiter
+{{URL}}/recruiter/top-performing-jobs/with-views
+
+
+GET
+Get advanced analytics - recruiter
+{{URL}}/recruiter-dashboard/analytics/advanced?applicantEducation=Bachelor's&jobEducation=Bachelor's in CS
+
+
+GET
+✅Application trends - recruiter
+{{URL}}/recruiter-dashboard/analytics/trends
+
+
+POST
+✅ Forgot password - user, recruiter, admin
+{{URL}}/auth/forgot-password
+
+
+POST
+✅Reset Password - user, recruiter, admin
+{{URL}}/auth/reset-password/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5MDBhOGU0YTMxNDA1NGQzM2FjYjdhYiIsInJvbGUiOiJyZWNydWl0ZXIiLCJpYXQiOjE3NjMwMDkwMDIsImV4cCI6MTc2MzAwOTkwMn0.8DgZxhbZtnSm6MWrei7uzLsgmxutHZpGjrcKrpgVh8A
+
+
+

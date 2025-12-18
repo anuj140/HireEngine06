@@ -1,0 +1,154 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Company Portal - Job Portal Pro</title>
+    <link href="https://api.fontshare.com/v2/css?f[]=satoshi@700,500,400&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['Satoshi', 'Satoshi Fallback', 'sans-serif'],
+            },
+            colors: {
+              primary: '#0073B1',
+              'primary-dark': '#005f94',
+              accent: '#00B8D9',
+              'accent-dark': '#009cb8',
+              secondary: '#ff7555',
+              'light-gray': '#F5F6F7',
+              'medium-gray': '#EAEAEA',
+              'dark-gray': '#333333',
+              success: '#28A745',
+              dark: {
+                background: '#1a202c',
+                'light-background': '#2d3748',
+                text: '#e2e8f0',
+                'text-secondary': '#a0aec0',
+                border: '#4a5568',
+              }
+            },
+             keyframes: {
+              fadeIn: {
+                '0%': { opacity: '0' },
+                '100%': { opacity: '1' },
+              },
+              scaleIn: {
+                '0%': { opacity: '0', transform: 'scale(0.95)' },
+                '100%': { opacity: '1', transform: 'scale(1)' },
+              },
+              slideInRight: {
+                '0%': { transform: 'translateX(100%)', opacity: '0' },
+                '100%': { transform: 'translateX(0)', opacity: '1' },
+              },
+               slideDown: {
+                '0%': { transform: 'translateY(-20%)', opacity: '0' },
+                '100%': { transform: 'translateY(0)', opacity: '1' },
+              },
+              slideUpFromBottom: {
+                '0%': { transform: 'translateY(100%)', opacity: '0' },
+                '100%': { transform: 'translateY(0)', opacity: '1' },
+              },
+            },
+            animation: {
+              'fade-in': 'fadeIn 0.2s ease-out forwards',
+              'scale-in': 'scaleIn 0.2s ease-out forwards',
+              'slide-in-right': 'slideInRight 0.3s ease-out forwards',
+              'slide-down': 'slideDown 0.3s ease-out forwards',
+              'slide-up-from-bottom': 'slideUpFromBottom 0.3s ease-out forwards',
+            },
+          },
+        },
+      }
+    </script>
+    <style>
+       @font-face {
+        font-family: 'Satoshi Fallback';
+        src: local('Arial');
+        size-adjust: 95.00%;
+        ascent-override: 96%;
+        descent-override: 25%;
+        line-gap-override: 0%;
+      }
+       .page-gradient-background {
+        background-color: #f7fafc;
+        background-image:
+          radial-gradient(circle at 15% 25%, rgba(0, 115, 177, 0.1) 0%, transparent 40%),
+          radial-gradient(circle at 85% 75%, rgba(255, 117, 85, 0.1) 0%, transparent 40%);
+      }
+      .dark .page-gradient-background {
+        background-color: #1a202c;
+        background-image:
+          radial-gradient(circle at 15% 25%, rgba(0, 115, 177, 0.2) 0%, transparent 40%),
+          radial-gradient(circle at 85% 75%, rgba(255, 117, 85, 0.15) 0%, transparent 40%);
+      }
+      .animate-float {
+        animation: float 6s ease-in-out infinite;
+      }
+      .animate-float-d1 {
+        animation: float 7s ease-in-out infinite 0.5s;
+      }
+      .animate-float-d2 {
+        animation: float 8s ease-in-out infinite 1s;
+      }
+       .animate-float-d3 {
+        animation: float 5s ease-in-out infinite 0.8s;
+      }
+      @keyframes float {
+        0% { transform: translateY(0px); }
+        50% { transform: translateY(-15px); }
+        100% { transform: translateY(0px); }
+      }
+      .scrollbar-hide::-webkit-scrollbar {
+        display: none;
+      }
+      .scrollbar-hide {
+        -ms-overflow-style: none; /* IE and Edge */
+        scrollbar-width: none; /* Firefox */
+      }
+      .custom-scrollbar::-webkit-scrollbar {
+        width: 6px;
+      }
+      .custom-scrollbar::-webkit-scrollbar-track {
+        background: #f7f8fa;
+        border-radius: 10px;
+      }
+      .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: #EAEAEA;
+        border-radius: 10px;
+      }
+      .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+        background: #c7c7c7;
+      }
+       .dark .custom-scrollbar::-webkit-scrollbar-track {
+        background: #2d3748;
+      }
+      .dark .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: #4a5568;
+      }
+      .dark .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+        background: #718096;
+      }
+       body, .bg-light-gray {
+        transition: background-color 0.3s ease, color 0.3s ease;
+      }
+      .dark body, .dark .bg-light-gray {
+        background-color: #1a202c;
+        color: #e2e8f0;
+      }
+      .dark .bg-white {
+        background-color: #2d3748;
+      }
+    </style>
+  </head>
+  <body class="font-sans">
+    <div id="root"></div>
+    <script type="module" src="/index.tsx"></script>
+  </body>
+</html>
