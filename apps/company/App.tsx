@@ -7,6 +7,8 @@ import React, { useState, useEffect } from 'react';
 import { HashRouter, Routes, Route, Navigate, Outlet, useOutletContext } from 'react-router-dom';
 import LandingPage from './pages/LandingPage';
 import LoginPage from './pages/LoginPage';
+import ForgotPasswordPage from './pages/ForgotPasswordPage';
+import ResetPasswordPage from './pages/ResetPasswordPage';
 import RegisterPage from './pages/RegisterPage';
 import DashboardPage from './pages/DashboardPage';
 import Header from './components/Header';
@@ -122,6 +124,8 @@ const AppRoutes: React.FC = () => {
                 <Route path="/" element={<LandingPageWrapper />} />
                 <Route path="/login" element={user ? <Navigate to="/dashboard" replace /> : <LoginPage />} />
                 <Route path="/register" element={user ? <Navigate to="/dashboard" replace /> : <RegisterPage />} />
+                <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+                <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
             </Route>
 
             <Route

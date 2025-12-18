@@ -89,6 +89,18 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
                             />
                         </div>
                     </div>
+                    
+                    <div className="flex items-end justify-end">
+                        <div className="text-sm">
+                            <Link 
+                                to="/forgot-password" 
+                                onClick={onClose}
+                                className="font-medium text-primary hover:text-primary-dark"
+                            >
+                                Forgot your password?
+                            </Link>
+                        </div>
+                    </div>
                     <div>
                         <button
                             type="submit"

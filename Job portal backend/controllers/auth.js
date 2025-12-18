@@ -253,12 +253,12 @@ exports.forgotPassword = async (req, res, next) => {
     let account;
 
     account = await User.findOne({ email });
-    // if (!account) {
-    //   return res.status(404).json({ message: "User not found" });
-    // }
-    account = await Recruiter.findOne({ email });
     if (!account) {
-      return res.status(404).json({ message: "Recruiter not found" });
+      account = await Recruiter.findOne({ email });
+    }
+
+    if (!account) {
+      return res.status(404).json({ message: "User or Recruiter not found" });
     }
 
     const token = generateEmailToken(account._id);
