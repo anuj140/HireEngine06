@@ -1,0 +1,36 @@
+{
+  "scripts": {
+    "dev": "vite",
+    "build": "npm run build:web && npm run build:company && npm run build:admin && npm run build:restaurant",
+    "build:web": "npm run use:web && vite build --base=./ --outDir dist/web",
+    "build:company": "npm run use:company && vite build --base=./ --outDir dist/company",
+    "build:admin": "npm run use:admin && vite build --base=./ --outDir dist/admin",
+    "build:restaurant": "npm run use:restaurant && vite build --base=./ --outDir dist/restaurant",
+    "use:company": "shx cp apps/company/index.tsx ./index.tsx",
+    "use:web": "shx cp apps/web/index.tsx ./index.tsx",
+    "use:admin": "shx cp apps/admin/index.tsx ./index.tsx",
+    "use:restaurant": "shx cp apps/restaurant/index.tsx ./index.tsx"
+  },
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "dependencies": {
+    "chart.js": "^4.5.1",
+    "framer-motion": "^12.23.24",
+    "react": "^18.3.1",
+    "react-chartjs-2": "^5.3.1",
+    "react-dom": "^18.3.1",
+    "react-dropzone": "^14.2.3",
+    "react-router-dom": "^6.23.1",
+    "recharts": "^2.12.7"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "@vitejs/plugin-react": "^4.3.0",
+    "shx": "^0.3.4",
+    "typescript": "^5.4.5",
+    "vite": "^5.2.11"
+  }
+}

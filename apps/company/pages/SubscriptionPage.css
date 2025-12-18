@@ -1,0 +1,115 @@
+/* Premium Subscription Card Styles - Glass Morphism */
+
+:root {
+    --font-primary: 'Inter', sans-serif;
+    --card-bg: rgba(255, 255, 255, 0.95);
+    --card-border: rgba(200, 200, 200, 0.3);
+    --card-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+    --gradient-start: #667eea;
+    --gradient-end: #764ba2;
+}
+
+/* Premium (Pro & Pro Max) card with glass effect */
+.card {
+    position: relative;
+    width: 100%;
+    border-radius: 1.25rem;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow: var(--card-shadow);
+    transition: all 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 40px rgba(31, 38, 135, 0.25);
+    border-color: rgba(102, 126, 234, 0.4);
+}
+
+/* Standard card with glass effect */
+.card-standard {
+    position: relative;
+    width: 100%;
+    border-radius: 1.25rem;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow: var(--card-shadow);
+    transition: all 0.3s ease;
+}
+
+.card-standard:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 40px rgba(31, 38, 135, 0.25);
+    border-color: rgba(59, 130, 246, 0.4);
+}
+
+/* CTA button - premium gradient for Pro/Pro Max */
+.cta {
+    display: block;
+    width: 100%;
+    padding: 0.875rem 1.5rem;
+    border-radius: 0.75rem;
+    font-weight: 600;
+    font-size: 1rem;
+    text-align: center;
+    color: #fff;
+    background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+    border: none;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.cta:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+/* Standard button - solid blue */
+.btn-standard {
+    display: block;
+    width: 100%;
+    padding: 0.875rem 1.5rem;
+    border-radius: 0.75rem;
+    font-weight: 600;
+    font-size: 1rem;
+    text-align: center;
+    color: #fff;
+    background: #3b82f6;
+    border: none;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+}
+
+.btn-standard:hover {
+    background: #2563eb;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+}
+
+/* Utility for vertical spacing */
+.flow>*+* {
+    margin-top: var(--flow-space, 1.25em);
+}
+
+/* Feature list bullets */
+.card__bullets {
+    line-height: 1.6;
+}
+
+/* Heading inside the card */
+.card__heading {
+    font-size: 1.125rem;
+    font-weight: 600;
+}
+
+/* Price inside the card */
+.card__price {
+    font-size: 1.875rem;
+    font-weight: 700;
+}

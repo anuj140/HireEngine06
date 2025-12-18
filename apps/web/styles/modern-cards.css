@@ -1,0 +1,305 @@
+/* Modern Cards Stylesheet */
+
+/* Base Card Styles */
+.modern-card {
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.modern-card a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* Card Badge */
+.modern-card-badge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  z-index: 10;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Card Icon */
+.modern-card-icon {
+  position: absolute;
+  top: -20px;
+  left: 20px;
+  width: 60px;
+  height: 60px;
+  background: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 10;
+}
+
+/* Card Image */
+.modern-card-image {
+  width: 100%;
+  height: 200px;
+  overflow: hidden;
+}
+
+.modern-card-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Card Content */
+.modern-card-content {
+  padding: 20px;
+}
+
+.modern-card-title {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: #1a202c;
+}
+
+.modern-card-description {
+  font-size: 14px;
+  color: #718096;
+  line-height: 1.6;
+}
+
+/* ============================================
+   VARIANT: OVERLAY CARD
+   ============================================ */
+.modern-card-overlay {
+  background: #000;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.modern-card-overlay .modern-card-image {
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+.modern-card-overlay .modern-card-image::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, transparent 100%);
+  transition: background 0.3s ease;
+}
+
+.modern-card-overlay:hover .modern-card-image::after {
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.3) 100%);
+}
+
+.modern-card-overlay .modern-card-content {
+  position: relative;
+  z-index: 5;
+  color: white;
+  margin-top: auto;
+}
+
+.modern-card-overlay .modern-card-title {
+  color: white;
+}
+
+.modern-card-overlay .modern-card-description {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+/* ============================================
+   VARIANT: SPLIT CARD
+   ============================================ */
+.modern-card-split {
+  display: flex;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.modern-card-split .modern-card-image {
+  flex: 0 0 40%;
+  height: auto;
+  border-radius: 16px 0 0 16px;
+}
+
+.modern-card-split .modern-card-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.modern-card-split:hover {
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+  border-color: rgba(102, 126, 234, 0.3);
+}
+
+/* ============================================
+   VARIANT: FLOATING CARD
+   ============================================ */
+.modern-card-floating {
+  background: white;
+  border-radius: 20px;
+  padding-top: 40px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.modern-card-floating .modern-card-image {
+  margin: 0 20px;
+  border-radius: 12px;
+  height: 180px;
+}
+
+.modern-card-floating:hover {
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.2);
+  transform: translateY(-12px);
+}
+
+/* ============================================
+   VARIANT: GRADIENT CARD
+   ============================================ */
+.modern-card-gradient {
+  background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+  background-size: 400% 400%;
+  animation: gradient 15s ease infinite;
+  border-radius: 16px;
+  color: white;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+}
+
+.modern-card-gradient .modern-card-title {
+  color: white;
+}
+
+.modern-card-gradient .modern-card-description {
+  color: rgba(255, 255, 255, 0.95);
+}
+
+.modern-card-gradient:hover {
+  animation: gradient 8s ease infinite;
+  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.3);
+}
+
+@keyframes gradient {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* ============================================
+   VARIANT: GLASSMORPHIC CARD
+   ============================================ */
+.modern-card-glassmorphic {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.modern-card-glassmorphic:hover {
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  border-color: rgba(255, 255, 255, 0.3);
+  box-shadow: 0 0 40px rgba(102, 126, 234, 0.4);
+}
+
+.modern-card-glassmorphic .modern-card-title {
+  color: #1a202c;
+}
+
+.modern-card-glassmorphic .modern-card-description {
+  color: #4a5568;
+}
+
+/* ============================================
+   ANIMATIONS
+   ============================================ */
+
+/* Shimmer Effect */
+.shimmer {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.3) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+/* Glow Pulse */
+.glow-pulse {
+  animation: glow 2s ease-in-out infinite;
+}
+
+@keyframes glow {
+  0%, 100% { 
+    box-shadow: 0 0 20px rgba(102, 126, 234, 0.5);
+  }
+  50% { 
+    box-shadow: 0 0 40px rgba(102, 126, 234, 0.8);
+  }
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .modern-card-split {
+    flex-direction: column;
+  }
+  
+  .modern-card-split .modern-card-image {
+    flex: 0 0 200px;
+    border-radius: 16px 16px 0 0;
+  }
+  
+  .modern-card-image {
+    height: 160px;
+  }
+}
+
+/* Accessibility */
+.modern-card:focus {
+  outline: 2px solid #667eea;
+  outline-offset: 2px;
+}
+
+.modern-card:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  .modern-card,
+  .modern-card-image img,
+  .modern-card-gradient {
+    animation: none !important;
+    transition: none !important;
+  }
+}
