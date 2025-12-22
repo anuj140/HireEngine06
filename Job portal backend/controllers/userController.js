@@ -11,97 +11,12 @@ const BadRequestError = require("../errors/bad-request");
 const NotFoundError = require("../errors/not-found");
 const generateEmailToken = require("../utils/genrateEmailToken");
 const sendEmail = require("../utils/sendEmail");
+const {
+  createNewApplicationNotification,
+  createApplicationWithdrawalNotification,
+} = require("./recruiterNotificationController");
 
 const client = twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
-
-// // Apply for job
-// exports.applyJob = async (req, res, next) => {
-//   try {
-//     const { jobId, answers } = req.body;
-//     const userId = req.user.id;
-
-//     if (!mongoose.Types.ObjectId.isValid(jobId)) {
-//       throw new BadRequestError("Invalid Job ID format");
-//     }
-
-//     // Fetch all required documents concurrently
-//     const [job, user, applicationExist] = await Promise.all([
-//       Job.findById(jobId),
-//       User.findById(userId),
-//       Application.findOne({ job: jobId, applicant: userId }),
-//     ]);
-
-//     if (!job || job.status !== "active") {
-//       throw new NotFoundError("Job not found or is no longer active");
-//     }
-//     if (!user) {
-//       throw new NotFoundError("Applicant user profile not found");
-//     }
-//     if (applicationExist) {
-//       throw new BadRequestError("You have already applied for this job");
-//     }
-
-//     // Compatibility fix: Map old recruiterQuestions to new questions format if needed
-//     if ((!job.questions || job.questions.length === 0) && job.recruiterQuestions && job.recruiterQuestions.length > 0) {
-//         job.questions = job.recruiterQuestions.map(q => ({
-//             question: q,
-//             type: 'text'
-//         }));
-//     }
-
-//     let answersForDb = [];
-//     if (job.questions && job.questions.length > 0) {
-//         if (!answers || !Array.isArray(answers) || answers.length !== job.questions.length) {
-//             throw new BadRequestError("All recruiter questions must be answered.");
-//         }
-//         answersForDb = job.questions.map((q, index) => {
-//             const userAnswer = answers[index];
-//             if (!userAnswer || typeof userAnswer !== 'object' || userAnswer.question !== q.question) {
-//                 throw new BadRequestError(`Data for question #${index + 1} is missing or malformed.`);
-//             }
-//             if (q.type === "boolean" && typeof userAnswer.answer !== "boolean") {
-//               throw new BadRequestError(`Answer for "${q.question}" must be true/false`);
-//             }
-//             if (q.type === "text" && typeof userAnswer.answer !== "string") {
-//               throw new BadRequestError(`Answer for "${q.question}" must be text`);
-//             }
-//             return {
-//                 question: q.question,
-//                 type: q.type,
-//                 answer: userAnswer.answer,
-//             };
-//         });
-//     }
-
-//     // Create application with answers
-//     const application = await Application.create({
-//       job: jobId,
-//       applicant: userId,
-//       answers: answersForDb,
-//     });
-
-//     // Atomic Updates using findByIdAndUpdate
-//     // This prevents race conditions where saving the document version fails
-//     await Promise.all([
-//         // Add to User's applied jobs
-//         User.findByIdAndUpdate(userId, {
-//             $addToSet: { appliedJobs: { job: jobId, status: "applied" } }
-//         }),
-//         // Add to Job's applicants list
-//         Job.findByIdAndUpdate(jobId, {
-//             $addToSet: { applicants: application._id }
-//         })
-//     ]);
-
-//     return res.status(201).json({
-//       success: true,
-//       msg: `Successfully applied for ${job.title}!`,
-//       application: application,
-//     });
-//   } catch (err) {
-//     next(err);
-//   }
-// };
 
 // Apply Job with notification
 exports.applyJob = async (req, res, next) => {
@@ -213,6 +128,14 @@ exports.applyJob = async (req, res, next) => {
       priority: "low", // Informational notification
     });
 
+    createNewApplicationNotification(
+      job.company,
+      job._id,
+      application._id,
+      application.applicant.name,
+      job.title
+    );
+
     return res.status(201).json({
       success: true,
       msg: `Successfully applied for ${job.title}!`,
@@ -233,8 +156,14 @@ exports.withdrawApplication = async (req, res, next) => {
       throw new BadRequestError("Invalid Job ID format");
     }
 
-    // Find the application
-    const application = await Application.findOne({ job: jobId, applicant: userId });
+    // Find the application and populate necessary job fields
+    const application = await Application.findOne({ 
+      job: jobId, 
+      applicant: userId 
+    }).populate({
+      path: 'job',
+      select: 'company title', // Only populate necessary fields
+    });
 
     if (!application) {
       throw new NotFoundError("Application not found");
@@ -259,6 +188,22 @@ exports.withdrawApplication = async (req, res, next) => {
         $pull: { applicants: application._id },
       }),
     ]);
+
+    // Get the job's company ID separately
+    const job = await Job.findById(jobId).select('company');
+    
+    // Get user details for notification
+    const user = await User.findById(userId).select('name');
+    
+    // Create notification with proper data
+    if (job && user) {
+      createApplicationWithdrawalNotification(
+        job.company, // Now this will be the actual company ID
+        application.job._id, // Use the job ID from the application
+        user.name, // Use the user's name
+        application.job.title // Use the job title from populated application
+      );
+    }
 
     return res.status(200).json({
       success: true,

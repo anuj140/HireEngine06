@@ -1,4 +1,0 @@
-PORT=5000
-MONGO_URI=mongodb+srv://anuj30283:Anuj30283@cluster0.p1b0d.mongodb.net/JobPortalPro?retryWrites=true&w=majority&appName=Cluster0
-JWT_SECRET=your_jwt_secret_key_here
-JWT_LIFETIME=30d

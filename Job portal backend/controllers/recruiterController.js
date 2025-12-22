@@ -300,119 +300,191 @@ exports.getAllApplicants = async (req, res) => {
 
 // Add job
 const addJob = async (req, res) => {
-  // whitelisted fields to avoid saving unwanted properties
-  const {
-    title,
-    position,
-    companyName,
-    companyDescription,
-    companySocial,
-    jobType,
-    workMode, // Added
-    earningPotential,
-    fixedEarnings,
-    experienceLevel,
-    jobHighlights,
-    description,
-    requirements,
-    skills,
-    experience,
-    education,
-    educationalQualification, // Added
-    gender,
-    salary,
-    location,
-    questions,
-    applicationDeadline, // Added
-    industry, // Added
-    department, // Added
-    perksAndBenefits, // Added
-    shiftTimings, // Added
-    noticePeriodPreference, // Added
-    preferredCandidateLocation, // Added
-    hiringType, // Added
-    applicationInstructions, // Added
-    interviewProcessInfo, // Added
-  } = req.body;
+  try {
+    // whitelisted fields to avoid saving unwanted properties
+    const {
+      title,
+      position,
+      companyName,
+      companyDescription,
+      companySocial,
+      jobType,
+      workMode, // Added
+      earningPotential,
+      fixedEarnings,
+      experienceLevel,
+      jobHighlights,
+      description,
+      requirements,
+      skills,
+      experience,
+      education,
+      educationalQualification, // Added
+      gender,
+      salary,
+      location,
+      questions,
+      applicationDeadline, // Added
+      industry, // Added
+      department, // Added
+      perksAndBenefits, // Added
+      shiftTimings, // Added
+      noticePeriodPreference, // Added
+      preferredCandidateLocation, // Added
+      hiringType, // Added
+      applicationInstructions, // Added
+      interviewProcessInfo, // Added
+    } = req.body;
 
-  // validate max 5 questions
-  let formattedQuestions = [];
-  if (questions && Array.isArray(questions)) {
-    if (questions.length > 5) {
-      return res.status(400).json({ message: "Max 5 questions allowed" });
+    // Get recruiter's current subscription and job limits
+    const recruiter = await Recruiter.findById(req.user.id);
+    
+    if (!recruiter) {
+      return res.status(404).json({ 
+        success: false, 
+        message: "Recruiter not found" 
+      });
     }
-    formattedQuestions = questions.map((q) => ({
-      question: q.question,
-      type: q.type === "boolean" ? "boolean" : "text",
-    }));
+
+    // Check job posting limits based on subscription plan
+    const subscriptionPlan = recruiter.subscription?.plan || 'free';
+    const jobPostLimit = recruiter.subscription?.jobPostLimit || 3; // Default free limit
+    const jobsPostedThisMonth = recruiter.subscription?.jobsPostedThisMonth || 0;
+
+    // If recruiter has reached their limit, send notification and return error
+    if (jobsPostedThisMonth >= jobPostLimit) {
+      // Send notification to recruiter about limit reached
+      await createJobLimitReachedNotification(
+        recruiter._id,        // recruiterId
+        jobPostLimit,         // currentLimit
+        jobsPostedThisMonth   // used
+      );
+
+      return res.status(403).json({
+        success: false,
+        message: `You have reached your monthly job posting limit of ${jobPostLimit} jobs. Please upgrade your plan to post more jobs.`,
+        limitReached: true,
+        currentLimit: jobPostLimit,
+        used: jobsPostedThisMonth,
+        upgradeLink: "/recruiter/dashboard/subscription/upgrade"
+      });
+    }
+
+    // validate max 5 questions
+    let formattedQuestions = [];
+    if (questions && Array.isArray(questions)) {
+      if (questions.length > 5) {
+        return res.status(400).json({ 
+          success: false,
+          message: "Max 5 questions allowed" 
+        });
+      }
+      formattedQuestions = questions.map((q) => ({
+        question: q.question,
+        type: q.type === "boolean" ? "boolean" : "text",
+      }));
+    }
+
+    const jobPayload = {
+      title,
+      position,
+      companyName,
+      companyDescription,
+      companySocial,
+      jobType,
+      workMode, // Added
+      earningPotential,
+      fixedEarnings,
+      experienceLevel,
+      jobHighlights: Array.isArray(jobHighlights)
+        ? jobHighlights
+        : jobHighlights
+        ? jobHighlights
+            .split(",")
+            .map((s) => s.trim())
+            .filter((s) => s !== "")
+        : [],
+      description,
+      requirements: Array.isArray(requirements)
+        ? requirements
+        : requirements
+        ? requirements.split(",").map((s) => s.trim())
+        : [],
+      skills: Array.isArray(skills)
+        ? skills
+        : skills
+        ? skills.split(",").map((s) => s.trim())
+        : [],
+      experience,
+      education,
+      educationalQualification, // Added
+      gender,
+      salary: salary ? Number(salary) : undefined,
+      location,
+      questions: formattedQuestions,
+      postedBy: req.user.id,
+      company: req.user.id, // Set company
+
+      // New fields
+      expiryDate: applicationDeadline
+        ? new Date(applicationDeadline)
+        : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+      applicationDeadline,
+      industry,
+      department,
+      perksAndBenefits: Array.isArray(perksAndBenefits)
+        ? perksAndBenefits
+        : perksAndBenefits
+        ? perksAndBenefits.split(",").map((s) => s.trim())
+        : [],
+      shiftTimings,
+      noticePeriodPreference,
+      preferredCandidateLocation,
+      hiringType,
+      applicationInstructions,
+      interviewProcessInfo,
+    };
+
+    const job = await Job.create(jobPayload);
+
+    // Update recruiter jobsPosted array and increment jobsPostedThisMonth
+    await Recruiter.findByIdAndUpdate(req.user.id, { 
+      $push: { jobsPosted: job._id },
+      $inc: { 'subscription.jobsPostedThisMonth': 1 }
+    });
+
+    // Check if this was the last available job post (to notify recruiter they're at limit)
+    const updatedRecruiter = await Recruiter.findById(req.user.id);
+    const updatedJobsCount = updatedRecruiter.subscription?.jobsPostedThisMonth || 0;
+    
+    if (updatedJobsCount >= jobPostLimit) {
+      // Send notification that limit has been reached after this job post
+      await createJobLimitReachedNotification(
+        recruiter._id,        // recruiterId
+        jobPostLimit,         // currentLimit
+        updatedJobsCount      // used
+      );
+    }
+
+    res.status(201).json({ 
+      success: true, 
+      job,
+      subscriptionInfo: {
+        plan: subscriptionPlan,
+        limit: jobPostLimit,
+        used: updatedJobsCount,
+        remaining: Math.max(0, jobPostLimit - updatedJobsCount)
+      }
+    });
+
+  } catch (error) {
+    console.error('Error creating job:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Failed to create job', 
+      error: error.message 
+    });
   }
-
-  const jobPayload = {
-    title,
-    position,
-    companyName,
-    companyDescription,
-    companySocial,
-    jobType,
-    workMode, // Added
-    earningPotential,
-    fixedEarnings,
-    experienceLevel,
-    jobHighlights: Array.isArray(jobHighlights)
-      ? jobHighlights
-      : jobHighlights
-      ? jobHighlights
-          .split(",")
-          .map((s) => s.trim())
-          .filter((s) => s !== "")
-      : [],
-    description,
-    requirements: Array.isArray(requirements)
-      ? requirements
-      : requirements
-      ? requirements.split(",").map((s) => s.trim())
-      : [],
-    skills: Array.isArray(skills)
-      ? skills
-      : skills
-      ? skills.split(",").map((s) => s.trim())
-      : [],
-    experience,
-    education,
-    educationalQualification, // Added
-    gender,
-    salary: salary ? Number(salary) : undefined,
-    location,
-    questions: formattedQuestions,
-    postedBy: req.user.id,
-    company: req.user.id, // Set company
-
-    // New fields
-    expiryDate: applicationDeadline
-      ? new Date(applicationDeadline)
-      : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
-    applicationDeadline,
-    industry,
-    department,
-    perksAndBenefits: Array.isArray(perksAndBenefits)
-      ? perksAndBenefits
-      : perksAndBenefits
-      ? perksAndBenefits.split(",").map((s) => s.trim())
-      : [],
-    shiftTimings,
-    noticePeriodPreference,
-    preferredCandidateLocation,
-    hiringType,
-    applicationInstructions,
-    interviewProcessInfo,
-  };
-
-  const job = await Job.create(jobPayload);
-
-  // Update recruiter jobsPosted
-  await Recruiter.findByIdAndUpdate(req.user.id, { $push: { jobsPosted: job._id } });
-
-  res.status(201).json({ success: true, job });
 };
 
 // Change applicant status
@@ -665,12 +737,35 @@ const getApplicantsForJob = async (req, res, next) => {
     const filter = { job: jobId };
     if (status && status !== "all") filter.status = status;
 
+    // Fetch applications
     const applications = await Application.find(filter)
       .populate({
         path: "applicant",
         select: "name email phone profile",
       })
       .sort({ appliedAt: -1 });
+
+    // Determine new applications (applications after last viewed)
+    const now = new Date();
+    const oneHourAgo = new Date(now.getTime() - 60 * 60 * 1000); // Applications in last 1 hour
+    
+    const newApplications = applications.filter(app => 
+      app.appliedAt > oneHourAgo && app.status === "New"
+    );
+
+    // Send notification if there are new applications
+    if (newApplications.length > 0) {
+      await createBulkApplicationsNotification(
+        req.user.id,                   // recruiterId
+        newApplications.length,        // count
+        job.title                     // jobTitle
+      );
+    }
+
+    // Update job's last viewed timestamp (optional - store in job or recruiter model)
+    await Job.findByIdAndUpdate(jobId, { 
+      $set: { lastViewedAt: new Date() } 
+    });
 
     const applicants = applications
       .map((app) => {
@@ -686,6 +781,9 @@ const getApplicantsForJob = async (req, res, next) => {
           question: q.question,
           answer: app.answers?.[i]?.answer || "Not answered",
         }));
+
+        // Mark if application is new (applied in last 1 hour)
+        const isNew = app.appliedAt > oneHourAgo;
 
         return {
           id: u._id.toString(),
@@ -705,6 +803,7 @@ const getApplicantsForJob = async (req, res, next) => {
           accomplishments: [],
           applicationDate: app.appliedAt,
           status: app.status,
+          isNew, // Add isNew flag
           answers: recruiterQnA.map((item) => item.answer),
           expectedSalary: u.profile.expectedSalary?.amount
             ? `${u.profile.expectedSalary.currency} ${u.profile.expectedSalary.amount}`
@@ -722,7 +821,15 @@ const getApplicantsForJob = async (req, res, next) => {
       })
       .filter(Boolean);
 
-    res.status(200).json({ success: true, applicants });
+    res.status(200).json({
+      success: true,
+      applicants,
+      stats: {
+        total: applications.length,
+        new: newApplications.length,
+        jobTitle: job.title
+      }
+    });
   } catch (error) {
     next(error);
   }

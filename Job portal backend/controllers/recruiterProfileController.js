@@ -1,4 +1,3 @@
-
 const Recruiter = require("../models/Recruiter");
 const TeamMember = require("../models/TeamMember");
 const { BadRequestError, NotFoundError, ForbiddenError } = require("../errors");
@@ -7,13 +6,13 @@ const cloudinary = require("../config/cloudinary");
 // Helper to upload a base64 image string to Cloudinary
 const uploadImage = async (base64Image) => {
   // If it's not a base64 string (e.g., already a URL), return it as is.
-  if (!base64Image || !base64Image.startsWith('data:image')) {
+  if (!base64Image || !base64Image.startsWith("data:image")) {
     return base64Image;
   }
   try {
     const result = await cloudinary.uploader.upload(base64Image, {
       folder: "jobportal/company_profiles",
-      resource_type: "image"
+      resource_type: "image",
     });
     return result.secure_url;
   } catch (error) {
@@ -21,7 +20,6 @@ const uploadImage = async (base64Image) => {
     throw new Error("Image upload failed");
   }
 };
-
 
 // GET Recruiter Profile (for logged-in recruiter or team member)
 exports.getRecruiterProfile = async (req, res, next) => {
@@ -33,7 +31,11 @@ exports.getRecruiterProfile = async (req, res, next) => {
     let userProfile;
 
     // Check if user is a team member (HRManager or team_member role)
-    if (req.user.role === 'HRManager' || req.user.role === 'team_member' || req.user.recruiterId) {
+    if (
+      req.user.role === "HRManager" ||
+      req.user.role === "team_member" ||
+      req.user.recruiterId
+    ) {
       // Fetch team member data
       const teamMember = await TeamMember.findById(req.user.id).select("-password");
 
@@ -43,8 +45,7 @@ exports.getRecruiterProfile = async (req, res, next) => {
 
       userProfile = teamMember.toObject();
       // Map role for display
-      userProfile.role = 'HR Manager';
-
+      userProfile.role = "HR Manager";
     } else {
       // Fetch recruiter data from database
       const recruiter = await Recruiter.findById(req.user.id).select("-password");
@@ -60,10 +61,10 @@ exports.getRecruiterProfile = async (req, res, next) => {
       userProfile.name = userProfile.companyName;
 
       // Map role for display
-      if (userProfile.role === 'recruiter' && !userProfile.recruiterId) {
-        userProfile.role = 'Admin';
-      } else if (userProfile.role === 'team_member') {
-        userProfile.role = 'HR Manager';
+      if (userProfile.role === "recruiter" && !userProfile.recruiterId) {
+        userProfile.role = "Admin";
+      } else if (userProfile.role === "team_member") {
+        userProfile.role = "HR Manager";
       }
     }
 
@@ -73,8 +74,8 @@ exports.getRecruiterProfile = async (req, res, next) => {
   }
 };
 
-
 exports.upsertCompanyProfile = async (req, res, next) => {
+  console.log("upsertCompanyProfile controller is called!!!");
   try {
     const recruiterId = req.user.id;
     let updates = req.body;
@@ -93,18 +94,20 @@ exports.upsertCompanyProfile = async (req, res, next) => {
       updates.logoUrl = await uploadImage(updates.logoUrl);
     }
     if (updates.overview?.diversityInclusion?.imageUrl) {
-      updates.overview.diversityInclusion.imageUrl = await uploadImage(updates.overview.diversityInclusion.imageUrl);
+      updates.overview.diversityInclusion.imageUrl = await uploadImage(
+        updates.overview.diversityInclusion.imageUrl
+      );
     }
     if (updates.overview?.communityEngagement?.images) {
       updates.overview.communityEngagement.images = await Promise.all(
-        (updates.overview.communityEngagement.images || []).map(img => uploadImage(img))
+        (updates.overview.communityEngagement.images || []).map((img) => uploadImage(img))
       );
     }
     if (updates.overview?.leaders) {
       updates.overview.leaders = await Promise.all(
-        (updates.overview.leaders || []).map(async leader => ({
+        (updates.overview.leaders || []).map(async (leader) => ({
           ...leader,
-          imageUrl: await uploadImage(leader.imageUrl)
+          imageUrl: await uploadImage(leader.imageUrl),
         }))
       );
     }

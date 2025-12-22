@@ -4,7 +4,6 @@ const notificationSchema = new mongoose.Schema(
   {
     user: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
       required: true,
       index: true,
     },
@@ -12,13 +11,31 @@ const notificationSchema = new mongoose.Schema(
       type: String,
       required: true,
       enum: [
-        "application_status_change", // When recruiter changes application status
-        "interview_scheduled",       // When interview is scheduled
-        "job_recommendation",        // New job matching user skills
-        "profile_reminder",          // Profile completion reminder
-        "account_alert",             // Security/account alerts
-        "recruiter_message",         // Message from recruiter
-        "system_announcement",       // System-wide announcements
+        // User notifications (existing)
+        "application_status_change",
+        "interview_scheduled",
+        "job_recommendation",
+        "profile_reminder",
+        "account_alert",
+        "recruiter_message",
+        "system_announcement",
+
+        // Recruiter notifications (new)
+        "new_application",
+        "application_withdrawal",
+        "subscription_expiring",
+        "job_limit_reached",
+        "profile_verification",
+        "company_review",
+        "team_invitation",
+        "candidate_assigned",
+        "interview_reminder",
+        "interview_cancelled",
+        "system_maintenance",
+        "policy_update",
+        "job_analytics",
+        "payment_success",
+        "payment_failed",
       ],
     },
     title: {
@@ -77,7 +94,7 @@ notificationSchema.virtual("formattedDate").get(function () {
   if (diffMins < 60) return `${diffMins} minute${diffMins > 1 ? "s" : ""} ago`;
   if (diffHours < 24) return `${diffHours} hour${diffHours > 1 ? "s" : ""} ago`;
   if (diffDays < 7) return `${diffDays} day${diffDays > 1 ? "s" : ""} ago`;
-  
+
   return this.createdAt.toLocaleDateString("en-US", {
     month: "short",
     day: "numeric",

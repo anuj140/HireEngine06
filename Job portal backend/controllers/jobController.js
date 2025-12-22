@@ -368,7 +368,7 @@ const getRecommendedJobs = async (req, res, next) => {
       .lean();
 
     if (recommendedJobs.length < 20) {
-      const recommendedIds = recommendedJobs.map((j) => j._id);
+      let recommendedIds = recommendedJobs.map((j) => j._id);
       const latestJobs = await Job.find({
         status: "active",
         visibility: true,

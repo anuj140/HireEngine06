@@ -12,7 +12,6 @@ const jwt = require("jsonwebtoken");
 const { generateToken } = require("../utils/generateToken");
 require("dotenv").config();
 
-
 const client = twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
 
 // Step 1: Send OTP to phone
@@ -31,11 +30,11 @@ exports.sendOtp = async (req, res, next) => {
 
     // DEVELOPMENT: Bypassing Twilio OTP sending due to trial account limitations.
     // In production, the following block should be uncommented and the simulation block removed.
-    /*
+    
     await client.verify.v2
       .services(process.env.TWILIO_VERIFY_SERVICE_SID)
       .verifications.create({ to: phone, channel: "sms" });
-    */
+    
 
     // Create or refresh temp record for the OTP flow simulation
     await PhoneVerification.findOneAndUpdate(
@@ -60,21 +59,21 @@ exports.verifyOtp = async (req, res, next) => {
   try {
     // DEVELOPMENT: Bypassing Twilio verification. Use a magic OTP.
     // In a production environment, this block should be replaced with the real verification logic below.
-    if (otp === "123456") {
-      await PhoneVerification.findOneAndUpdate(
-        { phone },
-        { verified: true, expiresAt: new Date(Date.now() + 15 * 60 * 1000) },
-        { upsert: true }
-      );
+    // if (otp === "123456") {
+    //   await PhoneVerification.findOneAndUpdate(
+    //     { phone },
+    //     { verified: true, expiresAt: new Date(Date.now() + 15 * 60 * 1000) },
+    //     { upsert: true }
+    //   );
 
-      return res.status(200).json({
-        success: true,
-        message: "Phone verified successfully. You can now register.",
-      });
-    }
+    //   return res.status(200).json({
+    //     success: true,
+    //     message: "Phone verified successfully. You can now register.",
+    //   });
+    // }
 
     // PRODUCTION: Uncomment this block for live OTP verification.
-    /*
+    
     const verification_check = await client.verify.v2
       .services(process.env.TWILIO_VERIFY_SERVICE_SID)
       .verificationChecks.create({ to: phone, code: otp });
@@ -91,9 +90,9 @@ exports.verifyOtp = async (req, res, next) => {
         message: "Phone verified successfully. You can now register.",
       });
     }
-    */
+    
 
-    res.status(400).json({ success: false, message: "Invalid or expired OTP" });
+    // res.status(400).json({ success: false, message: "Invalid or expired OTP" });
   } catch (err) {
     next(err);
   }
@@ -253,11 +252,15 @@ exports.forgotPassword = async (req, res, next) => {
     let account;
 
     account = await User.findOne({ email });
+    console.log("account user: ", account);
     if (!account) {
       account = await Recruiter.findOne({ email });
+      console.log("account recruiter: ", account);
     }
 
     if (!account) {
+      console.log("both user and recruiter does not found: ", account);
+
       return res.status(404).json({ message: "User or Recruiter not found" });
     }
 

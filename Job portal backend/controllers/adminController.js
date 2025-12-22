@@ -1,3 +1,4 @@
+const { createVerificationNotification } = require("./recruiterNotificationController");
 
 const Recruiter = require("../models/Recruiter");
 const User = require("../models/User");
@@ -5,7 +6,6 @@ const User = require("../models/User");
 const RecruiterRequest = require("../models/RecruiterRequest");
 const BadRequestError = require("../errors/bad-request");
 const NotFoundError = require("../errors/not-found");
-
 
 // Block user/recruiter
 exports.blockAccount = async (req, res) => {
@@ -51,6 +51,8 @@ exports.approveRecruiterRequest = async (req, res, next) => {
     request.status = "approved";
     await request.save();
 
+    createVerificationNotification(recruiter._id, request.status);
+
     return res.status(200).json({
       success: true,
       message: "Recruiter approved and account created",
@@ -94,7 +96,9 @@ exports.getAdminProfile = async (req, res) => {
 // Get pending recruiter requests
 exports.getPendingRecruiterRequests = async (req, res, next) => {
   try {
-    const requests = await RecruiterRequest.find({ status: "pending" }).sort({ createdAt: -1 });
+    const requests = await RecruiterRequest.find({ status: "pending" }).sort({
+      createdAt: -1,
+    });
     res.status(200).json({ success: true, requests });
   } catch (err) {
     next(err);

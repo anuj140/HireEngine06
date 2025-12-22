@@ -29,6 +29,7 @@ const jobAlertRoutes = require("./routes/jobAlertRoutes");
 const recruiterAnalyticsRoutes = require("./routes/recruiterAnalyticsRoutes");
 const subscriptionRoutes = require("./routes/subscriptionRoutes");
 const notificationRoutes = require("./routes/notificationUserRoutes");
+const recruiterNotificationRoutes = require("./routes/recruiterNotificationRoutes");
 
 // Admin Routes
 const adminRoutes = require("./routes/adminRoutes");
@@ -45,8 +46,8 @@ const app = express();
 
 // --- Middleware Setup ---
 app.use(cors());
-app.use(express.json());
-
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ limit: '50mb', extended: true }));
 // --- Route Definitions ---
 
 // Public & Auth
@@ -83,6 +84,7 @@ app.use(
 );
 // New Subscription Routes
 app.use("/api/v1/subscriptions", subscriptionRoutes);
+app.use("/api/v1/recruiter/notifications", recruiterNotificationRoutes);
 
 // Admin
 app.use("/api/v1/admin", adminRoutes);

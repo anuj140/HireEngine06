@@ -3,6 +3,7 @@ const crypto = require("crypto");
 const Subscription = require("../models/Subcription");
 const SubscriptionPlan = require("../models/SubscriptionPlanSchema");
 const { BadRequestError, NotFoundError } = require("../errors");
+const { createPaymentSuccessNotification } = require("./recruiterNotificationController");
 
 const razorpay = new Razorpay({
   key_id: process.env.RAZORPAY_KEY_ID || "rzp_test_placeholder", // Fallback for dev
@@ -31,8 +32,8 @@ exports.createRazorpayOrder = async (req, res, next) => {
       receipt: `receipt_${Date.now()}`,
       notes: {
         planId: plan._id.toString(),
-        recruiterId: recruiterId.toString()
-      }
+        recruiterId: recruiterId.toString(),
+      },
     };
 
     const order = await razorpay.orders.create(options);
@@ -41,7 +42,7 @@ exports.createRazorpayOrder = async (req, res, next) => {
       success: true,
       order,
       plan,
-      razorpayKeyId: process.env.RAZORPAY_KEY_ID
+      razorpayKeyId: process.env.RAZORPAY_KEY_ID,
     });
   } catch (err) {
     next(err);
@@ -50,7 +51,8 @@ exports.createRazorpayOrder = async (req, res, next) => {
 
 exports.verifyPayment = async (req, res, next) => {
   try {
-    const { razorpay_order_id, razorpay_payment_id, razorpay_signature, planId } = req.body;
+    const { razorpay_order_id, razorpay_payment_id, razorpay_signature, planId } =
+      req.body;
     const recruiterId = req.user.id;
 
     const body = razorpay_order_id + "|" + razorpay_payment_id;
@@ -68,39 +70,45 @@ exports.verifyPayment = async (req, res, next) => {
 
       // Deactivate old active subscriptions
       await Subscription.updateMany(
-        { recruiterId, status: 'active' },
-        { status: 'cancelled' }
+        { recruiterId, status: "active" },
+        { status: "cancelled" }
       );
 
       const subscription = await Subscription.create({
         recruiterId,
         plan: plan._id,
-        status: 'active',
+        status: "active",
         startDate,
         endDate,
         payment: {
           amount: plan.price,
           currency: plan.currency,
-          paymentMethod: 'razorpay',
+          paymentMethod: "razorpay",
           transactionId: razorpay_payment_id,
-          paymentStatus: 'completed',
-          paidAt: new Date()
+          paymentStatus: "completed",
+          paidAt: new Date(),
         },
         usage: {
           jobsPosted: 0,
-          activeJobs: 0
-        }
+          activeJobs: 0,
+        },
       });
 
-      const { enforcePlanLimits } = require('../utils/subscriptionHelper');
+      const { enforcePlanLimits } = require("../utils/subscriptionHelper");
       await enforcePlanLimits(recruiterId);
+
+      createPaymentSuccessNotification(
+        recruiterId,
+        subscription.payment.amount,
+        plan.name,
+        "dummyInvoiceNumber"
+      );
 
       res.status(200).json({
         success: true,
         message: "Payment verified and subscription activated",
-        subscription
+        subscription,
       });
-
     } else {
       throw new BadRequestError("Invalid payment signature");
     }
