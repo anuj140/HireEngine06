@@ -24,8 +24,9 @@ const {
   upsertCompanyProfile,
   getRecruiterProfile,
 } = require("../controllers/recruiterProfileController");
-const notifyApplicationStatus = require('../services/notificationService')
-const { uploadRecruiterMedia } = require("../middleware/uploadMiddleware");
+// const notifyApplicationStatus = require('../services/notificationService')
+// const { uploadRecruiterMedia } = require("../middleware/uploadMiddleware");
+const {
 const {
   inviteTeamMember,
   getTeamMembers,

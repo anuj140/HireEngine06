@@ -43,7 +43,6 @@ const getJobs = async (req, res, next) => {
       const safeKeywords = escapeRegex(keywords);
       const companyRegex = new RegExp(safeKeywords, "i"); // Partial match
 
-      //! It always search companyName for keword (it does not make any sense keyword searching for only in companName)
       const company = await Recruiter.findOne({
         companyName: companyRegex,
         isActive: true,
@@ -58,7 +57,7 @@ const getJobs = async (req, res, next) => {
         })
           .populate(
             "postedBy",
-            "companyName logo rating reviews shortDescription aboutUs"
+            "companyName logo rating reviews shortDescription aboutUs logoUrl"
           )
           .sort({ createdAt: -1 })
           .lean();
@@ -74,7 +73,7 @@ const getJobs = async (req, res, next) => {
           })
             .populate(
               "postedBy",
-              "companyName logo rating reviews shortDescription aboutUs"
+              "companyName logo rating reviews shortDescription aboutUs logoUrl"
             )
             .limit(10)
             .sort({ createdAt: -1 })
@@ -182,7 +181,7 @@ const getJobs = async (req, res, next) => {
 
     const [jobDocs, totalJobs] = await Promise.all([
       Job.find(query)
-        .populate("postedBy", "companyName logo rating reviews shortDescription aboutUs")
+        .populate("postedBy", "companyName logoUrl rating reviews shortDescription aboutUs")
         .sort({ createdAt: -1 })
         .lean(),
       Job.countDocuments(query),
@@ -195,7 +194,7 @@ const getJobs = async (req, res, next) => {
         ? {
             id: postedBy._id.toString(),
             name: postedBy.companyName,
-            logoUrl: postedBy.logo || postedBy.logoUrl,
+            logoUrl: postedBy.logoUrl,
             description: postedBy.shortDescription || postedBy.aboutUs || "",
             rating: postedBy.rating || 4.0,
             reviews: postedBy.reviews || 0,
