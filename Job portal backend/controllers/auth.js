@@ -250,20 +250,24 @@ exports.forgotPassword = async (req, res, next) => {
       return res.status(400).json({ message: "Email is required" });
     }
 
-    let account;
-
-    account = await User.findOne({ email });
-    // if (!account) {
-    //   return res.status(404).json({ message: "User not found" });
-    // }
-    account = await Recruiter.findOne({ email });
+    let account = await User.findOne({ email });
     if (!account) {
-      return res.status(404).json({ message: "Recruiter not found" });
+      account = await Recruiter.findOne({ email });
+    }
+    if (!account) {
+      account = await TeamMember.findOne({ email });
+    }
+    if (!account) {
+      account = await Admin.findOne({ email });
+    }
+
+    if (!account) {
+      return res.status(404).json({ message: "User not found" });
     }
 
     const token = generateEmailToken(account._id);
-    // In a real app, this link would point to the frontend reset password page
-    const resetUrl = `${process.env.CLIENT_URL}/reset-password?token=${token}`;
+    // Link for HashRouter frontend
+    const resetUrl = `${process.env.CLIENT_URL}/#/reset-password/${token}`;
 
     try {
       await sendEmail({
@@ -276,12 +280,13 @@ exports.forgotPassword = async (req, res, next) => {
       });
     } catch (emailError) {
       console.error("Failed to send forgot password email:", emailError);
-      // We might want to return an error here or just log it depending on requirements
-      // For now, let's assume if the template is missing it will throw
       if (emailError.message.includes("Template")) {
         return res.status(500).json({ message: "Email template configuration error." });
       }
-      return res.status(500).json({ message: "Failed to send email." });
+      return res.status(500).json({
+        message: `Failed to send email: ${emailError.message}`,
+        details: emailError.response ? emailError.response.body : "No additional details"
+      });
     }
 
     res.status(200).json({

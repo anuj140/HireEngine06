@@ -119,9 +119,9 @@ const start = async () => {
     await connectDB(process.env.MONGO_URI); //* Don't comment out this line
     console.log("MongoDB Connected successfully!");
 
-    // // 2. Run Seed/Setup scripts
-    // await createAdminUser();
-    // await seedData();
+    // 2. Run Seed/Setup scripts
+    await createAdminUser();
+    await seedData();
 
     // Seed subscription plans if they don't exist
     // try {
